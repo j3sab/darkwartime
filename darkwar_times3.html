@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reloj Mundial - Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500&display=swap');
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f5f7;
+            margin: 0;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            grid-auto-rows: minmax(auto, 200px);
+            background-color:black;
+              background: linear-gradient(135deg, #2c2c2c, #1a1a1a); /* Degradado oscuro */
+              background-size: 400% 400%; /* Aumenta el tamaño del gradiente para hacerlo más suave */
+              animation: gradientAnimation 10s ease infinite; /* Animación suave del gradiente */
+              */
+        }
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+        .clock-container {
+            position:relative;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+            height:300px;
+
+        }
+        
+        .clock-container:hover {
+            transform: translateY(-5px);
+        }
+        
+
+        .country-name {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 5px;
+        }
+        
+        .utc-offset {
+            font-size: 14px;
+            color: #86868b;
+            margin-bottom: 10px;
+            background: #f5f5f7;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .digital-clock {
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            color: #000;
+            margin-bottom: 15px;
+            font-feature-settings: "tnum";
+        }
+        
+        .seconds {
+            font-size: 24px;
+            color: #86868b;
+        }
+        
+        .analog-clock {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e3e3e3;
+            position: relative;
+            margin: 15px 0;
+        }
+        
+        .hour-hand, .minute-hand, .second-hand {
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform-origin: 50% 100%;
+            background: #1d1d1f;
+        }
+        
+        .hour-hand {
+            width: 4px;
+            height: 40px;
+            margin-left: -2px;
+        }
+        
+        .minute-hand {
+            width: 3px;
+            height: 60px;
+            margin-left: -1.5px;
+        }
+        
+        .second-hand {
+            width: 1px;
+            height: 65px;
+            background: #ff3b30;
+            margin-left: -0.5px;
+        }
+        
+        .center-circle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #1d1d1f;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .country-flag {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 25px;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            object-fit: cover;
+            border: 1px solid #f0f0f0;
+            display:block;
+            opacity: 1 !important;      /* Siempre visible */
+            visibility: visible !important; /* Siempre visible */
+        }
+
+        .reset-time {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 14px;
+            color: #86868b;
+            background: #f5f5f7;
+            padding: 3px 8px;
+            border-radius: 10px;
+
+        }
+
+
+/* reset time */
+.countdown-premium {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 100;
+    /*font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;*/
+    background: rgba(28,28,30,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15),
+                inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+.countdown-premium-title {
+    color: rgba(229,229,234,0.8);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 12px;
+    /*font-weight: 600;*/
+}
+
+.countdown-premium-digits {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.countdown-premium-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.countdown-premium-box {
+    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 50%, #1c1c1e 100%);
+    color: #fff;
+    /*font-family: 'SF Mono', monospace;*/
+    font-size: 24px;
+    /*font-weight: 600;*/
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 4px 8px rgba(255,255,255,0.05),
+                inset 0 -4px 8px rgba(0,0,0,0.4),
+                0 4px 8px rgba(0,0,0,0.2);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.countdown-premium-box::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    border-radius: 10px 10px 0 0;
+}
+
+.countdown-premium-label {
+    color: rgba(212,175,55,0.9);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+.countdown-premium-separator {
+    color: rgba(229,229,234,1);
+    font-size: 22px;
+    font-weight: 600;
+    display: flex;
+    align-items: center; /* Alinea verticalmente al centro */
+    height: 48px; /* Misma altura que los digit-box */
+    margin-bottom: 0; /* Eliminamos el margin-bottom anterior */
+    padding-bottom: 6px; /* Ajuste fino de posición vertical */
+    transform: translateY(-10px); /* Ajuste pixel-perfect */
+
+}
+.reset-countdown-container{
+
+    position:fixed;
+    bottom:20px;
+    left:20px;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Los relojes se generarán automáticamente aquí mediante JavaScript -->
+    
+    <script>
+        // Zonas horarias a mostrar con sus offsets UTC
+        const timeZones = [
+            { id: 'america-mexico', name: 'México', timeZone: 'America/Mexico_City' , countryCode: 'MX' }, //-6
+            { id: 'america-bogota', name: 'Colombia', timeZone: 'America/Bogota' , countryCode: 'CO'}, //-5
+            { id: 'america-new_york', name: 'Nueva York', timeZone: 'America/New_York' , countryCode: 'US'}, //-4
+            { id: 'chile-continental', name: 'Chile', timeZone: 'Chile/Continental', countryCode: 'CL' },//-4
+            { id: 'America/Araguaina', name: 'Brazil', timeZone: 'America/Araguaina', countryCode: 'BR' },//-3
+            { id: 'america-argentina-buenos_aires', name: 'Argentina', timeZone: 'America/Argentina/Buenos_Aires', countryCode: 'AR' }, //-3
+            { id: 'america-noronha', name: '<span style="background-color:red; color:yellow;">SERVER TIME</span>', timeZone: 'America/Noronha', countryCode: 'GL' },//-2
+            { id: 'europe-madrid', name: 'Madrid', timeZone: 'Europe/Madrid', countryCode: 'ES' },  //+2
+            { id: 'europe/istanbul', name: 'Turquía', timeZone: 'Europe/Istanbul', countryCode: 'TR' },//+3
+        ];
+        
+        // Función para calcular el offset UTC
+        function getUTCOffset(timeZone) {
+            try {
+                const now = new Date();
+                const utcDate = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+                const tzDate = new Date(now.toLocaleString('en-US', { timeZone }));
+                const offset = (tzDate.getTime() - utcDate.getTime()) / (60 * 60 * 1000);
+                
+                // Formatear el offset
+                const hours = Math.floor(Math.abs(offset));
+                const minutes = Math.floor((Math.abs(offset) * 60) % 60);
+                const sign = offset >= 0 ? '+' : '-';
+                
+                // Mostrar solo horas si los minutos son 0
+                if (minutes === 0) {
+                    return `UTC${sign}${hours}`;
+                }
+                return `UTC${sign}${hours}:${minutes.toString().padStart(2, '0')}`;
+            } catch (e) {
+                console.error("Error calculando UTC offset para", timeZone, e);
+                return "UTC";
+            }
+        }
+        
+        // Añade esta función para calcular la hora de reset
+        function calculateResetTime(utcOffset) {
+            // Parsear el offset UTC (ej: "+2" de "UTC+2")
+            const offsetMatch = utcOffset.match(/UTC([+-])(\d+)/);
+            if (!offsetMatch) return "00:00";
+            
+            const sign = offsetMatch[1];
+            const offsetHours = parseInt(offsetMatch[2]);
+            
+            // Calcular diferencia con UTC-2 (nuestro punto de referencia)
+            let resetHour;
+            if (sign === '+') {
+                resetHour = (2 + offsetHours) % 24;
+            } else {
+                resetHour = (2 - offsetHours + 24) % 24;
+            }
+            
+            return `${resetHour.toString().padStart(2, '0')}:00`;
+        }
+
+
+        // Añade esta función para crear el contador de reset
+        function createResetCountdown() {
+            const container = document.createElement('div');
+            container.className = 'reset-countdown-container';
+            container.innerHTML = `
+                <div class="countdown-premium-title">Time Remaining</div>
+                <div class="countdown-premium-digits">
+                    <div class="countdown-premium-block">
+                        <div class="countdown-premium-box hours">00</div>
+                        <div class="countdown-premium-label">Horas</div>
+                    </div>
+                    <div class="countdown-premium-separator">:</div>
+                    <div class="countdown-premium-block">
+                        <div class="countdown-premium-box minutes">00</div>
+                        <div class="countdown-premium-label">Minutos</div>
+                    </div>
+                    <div class="countdown-premium-separator">:</div>
+                    <div class="countdown-premium-block">
+                        <div class="countdown-premium-box seconds">00</div>
+                        <div class="countdown-premium-label">Segundos</div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(container);
+            updateResetCountdown(); // Actualizar inmediatamente
+            setInterval(updateResetCountdown, 1000);
+        }
+
+        function updateResetCountdown() {
+            const now = new Date();
+            const resetTime = new Date();
+            
+            resetTime.setUTCHours(2, 0, 0, 0);
+            if (now > resetTime) resetTime.setUTCDate(resetTime.getUTCDate() + 1);
+            
+            const diff = resetTime - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            
+            const hoursElement = document.querySelector('.countdown-premium-box.hours');
+            const minutesElement = document.querySelector('.countdown-premium-box.minutes');
+            const secondsElement = document.querySelector('.countdown-premium-box.seconds');
+            
+            if (hoursElement) hoursElement.textContent = hours;
+            if (minutesElement) minutesElement.textContent = minutes;
+            if (secondsElement) secondsElement.textContent = seconds;
+        }
+
+
+
+
+        // Crear los relojes en el DOM
+        function createClocks() {
+            const body = document.body;
+            
+            timeZones.forEach(zone => {
+                const utcOffset = getUTCOffset(zone.timeZone); console.log(utcOffset);
+                const resetTime = calculateResetTime(utcOffset);
+                const clockHTML = `
+                    <div class="clock-container" id="${zone.id}">
+                        <div class="country-name">${zone.name}</div>
+                        <div class="utc-offset">${utcOffset}</div>
+                        <div class="analog-clock">
+                            <div class="hour-hand"></div>
+                            <div class="minute-hand"></div>
+                            <div class="second-hand"></div>
+                            <div class="center-circle"></div>
+                        </div>
+                        <div class="digital-clock">
+                            <span class="hours">00</span>:<span class="minutes">00</span><span class="seconds">:00</span>
+                        </div>
+
+                        <img class="country-flag" 
+                             src="https://flagsapi.com/${zone.countryCode}/shiny/64.png" >
+                         
+                        <div class="reset-time">®️ ${resetTime}</div>
+
+                    </div>
+                `;
+                body.insertAdjacentHTML('beforeend', clockHTML);
+            });
+        }
+        
+        // Actualizar todos los relojes
+        function updateClocks() {
+            timeZones.forEach(zone => {
+                const now = new Date();
+                const options = { 
+                    timeZone: zone.timeZone,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+                
+                try {
+                    const formatter = new Intl.DateTimeFormat('es-MX', options);
+                    const parts = formatter.formatToParts(now);
+                    
+                    let hours, minutes, seconds;
+                    parts.forEach(part => {
+                        if (part.type === 'hour') hours = part.value;
+                        if (part.type === 'minute') minutes = part.value;
+                        if (part.type === 'second') seconds = part.value;
+                    });
+                    
+                    // Actualizar reloj digital
+                    const clock = document.getElementById(zone.id);
+                    if (clock) {
+                        clock.querySelector('.hours').textContent = hours;
+                        clock.querySelector('.minutes').textContent = minutes;
+                        clock.querySelector('.seconds').textContent = `:${seconds}`;
+                        
+                        // Actualizar reloj analógico
+                        const hourHand = clock.querySelector('.hour-hand');
+                        const minuteHand = clock.querySelector('.minute-hand');
+                        const secondHand = clock.querySelector('.second-hand');
+                        
+                        const h = parseInt(hours) % 12;
+                        const m = parseInt(minutes);
+                        const s = parseInt(seconds);
+                        
+                        hourHand.style.transform = `rotate(${(h * 30) + (m * 0.5)}deg)`;
+                        minuteHand.style.transform = `rotate(${m * 6}deg)`;
+                        secondHand.style.transform = `rotate(${s * 6}deg)`;
+                    }
+                } catch (e) {
+                    console.error("Error actualizando reloj para", zone.timeZone, e);
+                }
+            });
+        }
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            createClocks();
+            createResetCountdown(); 
+            updateClocks();
+            updateResetCountdown(); // Actualiza el contador
+            setInterval(updateClocks, 1000);
+            setInterval(updateResetCountdown, 1000);
+        });
+    </script>
+</body>
+</html>
